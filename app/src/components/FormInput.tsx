@@ -42,8 +42,9 @@ export default function UrlShortenerInput() {
         } catch (err) {
             if (axios.isAxiosError(err)) {
                 const errData = err.response?.data as ErrorResponse;
-                setError(errData?.error || MESSAGES.errors.shortenFailed);
-                toast.error(error, {
+                const errorMessage = errData?.error || MESSAGES.errors.shortenFailed;
+                setError(errorMessage);
+                toast.error(errorMessage, {
                     position: "top-center", style: {
                         '--normal-bg': 'color-mix(in oklab, var(--destructive) 10%, var(--background))',
                         '--normal-text': 'var(--destructive)',
