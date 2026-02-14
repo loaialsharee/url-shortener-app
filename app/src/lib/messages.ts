@@ -6,6 +6,7 @@ export const MESSAGES = {
     },
     success: {
         urlShortened: 'URL shortened successfully! 🎉',
+        copied: 'Short URL copied to clipboard!'
     },
     buttons: {
         shorten: 'Shorten',

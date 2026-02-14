@@ -1,8 +1,10 @@
-import { ExternalLink, Trash2 } from "lucide-react";
+import { ExternalLink, Trash2, Copy } from "lucide-react";
 import { Button } from "@/app/src/components/ui/button";
 import { Globe, CaptionsIcon } from "lucide-react";
 import { deleteUrl } from "@/app/src/lib/storage";
 import { ApiResponse } from "@/app/src/types/apiModels";
+import { toast } from "sonner";
+import { MESSAGES } from "@/app/src/lib/messages";
 
 interface Props {
     urls: ApiResponse[];
@@ -10,6 +12,18 @@ interface Props {
 }
 
 export default function History({ urls, onDelete }: Props) {
+
+    const copy = (shortUrl: string) => {
+        navigator.clipboard.writeText(shortUrl);
+        toast.success(MESSAGES.success.copied, {
+            position: "top-center", style: {
+                '--normal-bg':
+                    'color-mix(in oklab, light-dark(var(--color-green-600), var(--color-green-400)) 10%, var(--background))',
+                '--normal-text': 'light-dark(var(--color-green-600), var(--color-green-400))',
+                '--normal-border': 'light-dark(var(--color-green-600), var(--color-green-400))'
+            } as React.CSSProperties
+        });
+    };
 
     if (urls.length === 0) return null;
 
@@ -51,6 +65,9 @@ export default function History({ urls, onDelete }: Props) {
                                 <a href={u.short_url} target="_blank" rel="noopener noreferrer">
                                     <ExternalLink className="h-3.5 w-3.5" />
                                 </a>
+                            </Button>
+                            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => copy(u.short_url)}>
+                                <Copy className="h-3.5 w-3.5" />
                             </Button>
                             <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive" onClick={() => handleDelete(u.short_url)}>
                                 <Trash2 className="h-3.5 w-3.5" />
