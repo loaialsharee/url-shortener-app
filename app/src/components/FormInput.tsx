@@ -4,27 +4,26 @@ import axios from 'axios';
 import { Button } from "@/app/src/components/ui/button";
 import { Input } from "@/app/src/components/ui/input";
 import { MESSAGES } from '@/app/src/lib/messages';
+import { ApiResponse, ErrorResponse } from "@/app/src/types/apiModels";
 import { toast } from "sonner";
+import { storeUrl } from "@/app/src/lib/storage";
 
-interface ApiResponse {
-    short_url: string;
-    target_url: string;
-    title: string;
-}
-
-interface ErrorResponse {
-    error: string;
+interface Props {
+    onSuccess: () => void;
 }
 
 
-export default function UrlShortenerInput() {
+export default function UrlShortenerInput({ onSuccess }: Props) {
     const [url, setUrl] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [result, setResult] = useState<ApiResponse | null>(null);
 
     const handleSubmit = async (e: React.SubmitEvent) => {
         e.preventDefault();
         setLoading(true);
+        setResult(null);
+        setUrl("");
 
         try {
             const response = await axios.post<ApiResponse>('/api/shorten',
@@ -39,6 +38,10 @@ export default function UrlShortenerInput() {
                     '--normal-border': 'light-dark(var(--color-green-600), var(--color-green-400))'
                 } as React.CSSProperties
             })
+
+            storeUrl(response.data);
+            setResult(response.data)
+            onSuccess();
         } catch (err) {
             if (axios.isAxiosError(err)) {
                 const errData = err.response?.data as ErrorResponse;

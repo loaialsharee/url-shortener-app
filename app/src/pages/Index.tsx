@@ -2,8 +2,22 @@
 
 import { Wallet } from "lucide-react";
 import Input from "@/app/src/components/FormInput";
+import History from "@/app/src/components/History";
+import { getUrls } from "../lib/storage";
+import { useEffect, useState } from "react";
+import { ApiResponse } from "../types/apiModels";
 
 const Index = () => {
+
+    const [urls, setUrls] = useState<ApiResponse[]>([]);
+
+    useEffect(() => {
+        setUrls(getUrls());
+    }, []);
+
+    const refreshUrls = () => {
+        setUrls(getUrls());
+    };
 
     return (
         <div className="min-h-screen flex flex-col items-center justify-start px-4 pt-24 pb-12">
@@ -18,7 +32,9 @@ const Index = () => {
                     Paste your link & get a short and traceable URL instantly in your pocket!
                 </p>
 
-                <Input />
+                <Input onSuccess={refreshUrls} />
+
+                <History urls={urls} onDelete={refreshUrls} />
             </div>
         </div>
     );
