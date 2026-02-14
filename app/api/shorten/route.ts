@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import axios from 'axios';
+import { MESSAGES } from '@/app/src/lib/messages';
 
 interface RequestBody {
     target_url: string;
@@ -39,13 +40,13 @@ export async function POST(request: NextRequest) {
             console.log(apiError.error)
 
             return NextResponse.json(
-                { error: apiError?.error || 'Failed to shorten URL!' },
+                { error: apiError?.error || MESSAGES.errors.unexpectedError },
                 { status: error.response?.status || 500 }
             );
         }
 
         return NextResponse.json(
-            { error: 'Internal server error' },
+            { error: MESSAGES.errors.unexpectedError },
             { status: 500 }
         );
     }
