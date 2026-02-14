@@ -3,6 +3,7 @@ import { Link2, ArrowRight, Loader2 } from "lucide-react";
 import axios from 'axios';
 import { Button } from "@/app/src/components/ui/button";
 import { Input } from "@/app/src/components/ui/input";
+import { toast } from "sonner";
 
 interface ApiResponse {
     short_url: string;
@@ -28,10 +29,26 @@ export default function UrlShortenerInput() {
             const response = await axios.post<ApiResponse>('/api/shorten',
                 { target_url: url },
             );
-        } catch (error) {
-            if (axios.isAxiosError(error)) {
-                const err = error.response?.data as ErrorResponse;
-                setError(err?.error || 'Request failed');
+
+            toast.success("URL shortened successfully! 🎉", {
+                position: "top-center", style: {
+                    '--normal-bg':
+                        'color-mix(in oklab, light-dark(var(--color-green-600), var(--color-green-400)) 10%, var(--background))',
+                    '--normal-text': 'light-dark(var(--color-green-600), var(--color-green-400))',
+                    '--normal-border': 'light-dark(var(--color-green-600), var(--color-green-400))'
+                } as React.CSSProperties
+            })
+        } catch (err) {
+            if (axios.isAxiosError(err)) {
+                const errData = err.response?.data as ErrorResponse;
+                setError(errData?.error || 'Request failed');
+                toast.error(error, {
+                    position: "top-center", style: {
+                        '--normal-bg': 'color-mix(in oklab, var(--destructive) 10%, var(--background))',
+                        '--normal-text': 'var(--destructive)',
+                        '--normal-border': 'var(--destructive)'
+                    } as React.CSSProperties
+                })
             } else {
                 setError('An unexpected error occurred');
             }
