@@ -1,14 +1,43 @@
 import { useState } from "react";
 import { Link2, ArrowRight, Loader2 } from "lucide-react";
+import axios from 'axios';
 import { Button } from "@/app/src/components/ui/button";
 import { Input } from "@/app/src/components/ui/input";
+
+interface ApiResponse {
+    short_url: string;
+    target_url: string;
+    title: string;
+}
+
+interface ErrorResponse {
+    error: string;
+}
 
 
 export default function UrlShortenerInput() {
     const [url, setUrl] = useState("");
-    const [loading, _] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
-    const handleSubmit = (e: React.SubmitEvent) => {
+    const handleSubmit = async (e: React.SubmitEvent) => {
+        e.preventDefault();
+        setLoading(true);
+
+        try {
+            const response = await axios.post<ApiResponse>('/api/shorten',
+                { target_url: url },
+            );
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                const err = error.response?.data as ErrorResponse;
+                setError(err?.error || 'Request failed');
+            } else {
+                setError('An unexpected error occurred');
+            }
+        } finally {
+            setLoading(false);
+        }
     };
 
 
