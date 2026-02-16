@@ -73,7 +73,11 @@ export default function Analytics() {
         );
     }
 
-    const uniqueCountries = new Set(data.visits.map((v) => v.country)).size;
+    const uniqueCountries = new Set(
+        data.visits
+            .map((v) => v.country)
+            .filter((country) => country !== "Unknown")
+    ).size;
 
     const latestVisit = data.visits.length > 0
         ? data.visits.reduce((latest, visit) =>
