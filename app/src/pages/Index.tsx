@@ -20,8 +20,8 @@ const Index = () => {
     };
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-start px-4 pt-24 pb-12">
-            <div className="min-h-screen flex flex-col items-center justify-start px-4 pt-24 pb-12">
+        <div className="min-h-screen flex flex-col items-center justify-start px-4 pt-12 pb-12">
+            <div className="flex flex-col items-center justify-start px-4 pt-24 pb-12">
                 <div className="flex items-center gap-3 mb-2">
                     <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center">
                         <Wallet className="h-5 w-5 text-primary-foreground" />
