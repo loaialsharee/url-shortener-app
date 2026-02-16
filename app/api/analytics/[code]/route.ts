@@ -1,7 +1,7 @@
 // app/api/analytics/[code]/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import axios from 'axios';
-import { AnalyticsResponse, ErrorResponse } from '@/app/src/types/apiModels';
+import { AnalyticsData, ErrorResponse } from '@/app/src/types/apiModels';
 import { MESSAGES } from '@/app/src/lib/messages';
 
 export async function GET(
@@ -11,7 +11,7 @@ export async function GET(
     try {
         const { code } = await context.params;
 
-        const response = await axios.get<AnalyticsResponse>(
+        const response = await axios.get<AnalyticsData>(
             `${process.env.API_BASE}/analytics/${code}`
         );
 
