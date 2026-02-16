@@ -1,4 +1,4 @@
-import { ApiResponse, ShortenedUrl } from "@/app/src/types/apiModels";
+import { ApiResponse } from "@/app/src/types/apiModels";
 
 const STORAGE_KEY = "pocket-urls";
 
@@ -13,7 +13,7 @@ export function getUrls(): ApiResponse[] {
 
 export function storeUrl(response: ApiResponse) {
     const urls = getUrls();
-    const existing = urls.find((u) => u.short_url === response.short_url);
+    const existing = urls.find((u) => u.code === response.code);
     if (existing) return false;
 
     urls.unshift(response);
@@ -26,6 +26,6 @@ export function deleteUrl(short_url: string) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(urls));
 }
 
-// export function getShortUrl(shortCode: string): string {
-//     return `${window.location.origin}/s/${shortCode}`;
-// }
+export function getShortUrl(shortCode: string): string {
+    return `${window.location.origin}/s/${shortCode}`;
+}

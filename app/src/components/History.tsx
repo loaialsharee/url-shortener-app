@@ -1,10 +1,11 @@
-import { ExternalLink, Trash2, Copy } from "lucide-react";
+import { ExternalLink, Trash2, Copy, ChartNoAxesCombined } from "lucide-react";
 import { Button } from "@/app/src/components/ui/button";
 import { Globe, CaptionsIcon } from "lucide-react";
 import { deleteUrl } from "@/app/src/lib/storage";
 import { ApiResponse } from "@/app/src/types/apiModels";
 import { toast } from "sonner";
 import { MESSAGES } from "@/app/src/lib/messages";
+import { useRouter } from 'next/navigation';
 
 interface Props {
     urls: ApiResponse[];
@@ -12,6 +13,8 @@ interface Props {
 }
 
 export default function History({ urls, onDelete }: Props) {
+
+    const router = useRouter();
 
     const copy = (shortUrl: string) => {
         navigator.clipboard.writeText(shortUrl);
@@ -25,12 +28,16 @@ export default function History({ urls, onDelete }: Props) {
         });
     };
 
-    if (urls.length === 0) return null;
-
     const handleDelete = (shortUrl: string) => {
         deleteUrl(shortUrl);
         onDelete(shortUrl);
     };
+
+    const handleViewAnalytics = (code: string) => {
+        router.push(`/analytics/${code}`);
+    }
+
+    if (urls.length === 0) return null;
 
     return (
         <div className="w-full max-w-2xl mx-auto mt-10">
@@ -40,7 +47,7 @@ export default function History({ urls, onDelete }: Props) {
             <div className="space-y-2">
                 {urls.map((u) => (
                     <div
-                        key={u.short_url}
+                        key={u.code}
                         className="flex items-center gap-3 p-3 rounded-lg bg-card border border-border animate-fade-in"
                     >
                         <div className="flex-1 min-w-0 space-y-1">
@@ -69,7 +76,10 @@ export default function History({ urls, onDelete }: Props) {
                             <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => copy(u.short_url)}>
                                 <Copy className="h-3.5 w-3.5" />
                             </Button>
-                            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive" onClick={() => handleDelete(u.short_url)}>
+                            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleViewAnalytics(u.code)}>
+                                <ChartNoAxesCombined className="h-3.5 w-3.5" />
+                            </Button>
+                            <Button variant="ghost" size="icon" className="h-8 w-8 hover:text-destructive" onClick={() => handleDelete(u.short_url)}>
                                 <Trash2 className="h-3.5 w-3.5" />
                             </Button>
                         </div>
