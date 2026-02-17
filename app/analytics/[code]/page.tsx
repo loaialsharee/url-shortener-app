@@ -96,18 +96,54 @@ export default function Analytics() {
                 </Button>
             </div>
 
-            <h1 className="text-2xl font-bold tracking-tight mb-3">
+            <h1 className="text-xl md:text-2xl font-bold tracking-tight mb-3">
                 Link Analytics
             </h1>
-            <p className="text-sm text-muted-foreground mb-5 font-mono">
+            <p className="text-sm text-muted-foreground mb-5 font-mono break-all">
                 🔗 {data.short_url}
             </p>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+            {/* Mobile layout view */}
+            <div className="grid grid-cols-3 gap-2 mb-8 sm:hidden">
+                <Card>
+                    <CardContent className="pt-4 pb-3 px-3">
+                        <div className="flex items-center gap-1 mb-1">
+                            <MousePointerClick className="h-3 w-3 text-muted-foreground" />
+                            <p className="text-xs text-muted-foreground">{MESSAGES.titles.totalClicks}</p>
+                        </div>
+                        <p className="text-2xl font-bold">{data.total_clicks}</p>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardContent className="pt-4 pb-3 px-3">
+                        <div className="flex items-center gap-1 mb-1">
+                            <Globe className="h-3 w-3 text-muted-foreground" />
+                            <p className="text-xs text-muted-foreground">{MESSAGES.titles.countries}</p>
+                        </div>
+                        <p className="text-2xl font-bold">{uniqueCountries}</p>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardContent className="pt-4 pb-3 px-3">
+                        <div className="flex items-center gap-1 mb-1">
+                            <Clock className="h-3 w-3 text-muted-foreground" />
+                            <p className="text-xs text-muted-foreground">{MESSAGES.titles.latestVisit}</p>
+                        </div>
+                        <p className="text-lg font-bold leading-tight mt-2">
+                            {latestVisit ?
+                                getRelativeTime(latestVisit.visited_at)
+                                : "-"}
+                        </p>
+                    </CardContent>
+                </Card>
+            </div>
+
+            {/* Desktop layout view */}
+            <div className="hidden sm:grid grid-cols-3 gap-4 mb-8">
                 <Card>
                     <CardHeader className="pb-2">
                         <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                            <MousePointerClick className="h-4 w-4" /> Total Clicks
+                            <MousePointerClick className="h-4 w-4" /> {MESSAGES.titles.totalClicks}
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -117,7 +153,7 @@ export default function Analytics() {
                 <Card>
                     <CardHeader className="pb-2">
                         <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                            <Globe className="h-4 w-4" /> Countries
+                            <Globe className="h-4 w-4" /> {MESSAGES.titles.countries}
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -127,7 +163,7 @@ export default function Analytics() {
                 <Card>
                     <CardHeader className="pb-2">
                         <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                            <Clock className="h-4 w-4" /> Latest Visit
+                            <Clock className="h-4 w-4" /> {MESSAGES.titles.latestVisit}
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -149,7 +185,7 @@ export default function Analytics() {
 
             <Card>
                 <CardHeader>
-                    <CardTitle className="text-base">Recent Visits</CardTitle>
+                    <CardTitle className="text-base">{MESSAGES.titles.recentVisits}</CardTitle>
                 </CardHeader>
                 <CardContent className="p-0">
                     {data.visits.length === 0 ? (

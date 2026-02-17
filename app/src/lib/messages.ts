@@ -21,5 +21,12 @@ export const MESSAGES = {
         loading: 'Loading analytics...',
         noVisitData: 'No visit data yet.',
         noVisit: 'No visits yet'
+    },
+    titles: {
+        linkAnalytics: 'Link Analytics',
+        totalClicks: 'Total Clicks',
+        countries: 'Countries',
+        latestVisit: 'Latest Visit',
+        recentVisits: 'Recent Visits'
     }
 } as const;
