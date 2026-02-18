@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation"
 import axios from 'axios';
-import { ArrowLeft, Globe, MousePointerClick, Clock, Loader2 } from "lucide-react";
+import { ArrowLeft, Globe, MousePointerClick, Clock, Loader2, RefreshCcw } from "lucide-react";
 import { Button } from "@/app/src/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/app/src/components/ui/card";
 import {
@@ -23,24 +23,28 @@ export default function Analytics() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        const fetchAnalytics = async () => {
-            try {
-                setLoading(true);
-                const response = await axios.get(`/api/analytics/${code}`);
-                setData(response.data);
-                setError(null);
-            } catch (err) {
-                if (axios.isAxiosError(err)) {
-                    setError(err.response?.data?.error || MESSAGES.errors.analyticsFailed);
-                } else {
-                    setError(MESSAGES.errors.analyticsFailed);
-                }
-            } finally {
-                setLoading(false);
+    const fetchAnalytics = async () => {
+        try {
+            setLoading(true);
+            const response = await axios.get(`/api/analytics/${code}`);
+            setData(response.data);
+            setError(null);
+        } catch (err) {
+            if (axios.isAxiosError(err)) {
+                setError(err.response?.data?.error || MESSAGES.errors.analyticsFailed);
+            } else {
+                setError(MESSAGES.errors.analyticsFailed);
             }
-        };
+        } finally {
+            setLoading(false);
+        }
+    };
 
+    const handleRefresh = async () => {
+        await fetchAnalytics();
+    };
+
+    useEffect(() => {
         if (code) {
             fetchAnalytics();
         }
@@ -87,12 +91,18 @@ export default function Analytics() {
 
     return (
         <div className="min-h-screen px-4 pt-12 pb-16 max-w-4xl mx-auto">
-            <div className="mb-8">
+            <div className="flex items-center justify-between mb-8">
                 <Button variant="ghost" size="sm" className="hover:bg-primary/10 hover:text-primary" asChild>
                     <Link href="/">
                         <ArrowLeft className="mr-2 h-4 w-4" />
                         {MESSAGES.buttons.back}
                     </Link>
+                </Button>
+                <Button variant="outline" onClick={handleRefresh}>
+                        <RefreshCcw className={`h-4 w-4 sm:mr-2`} />
+                        <span className="hidden sm:inline">
+                            {MESSAGES.buttons.refresh}
+                        </span>
                 </Button>
             </div>
 

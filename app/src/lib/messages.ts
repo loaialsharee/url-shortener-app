@@ -12,7 +12,8 @@ export const MESSAGES = {
     },
     buttons: {
         shorten: 'Shorten',
-        back: 'Back'
+        back: 'Back',
+        refresh: 'Refresh'
     },
     placeholders: {
         enterUrl: 'Paste your long URL here...'
