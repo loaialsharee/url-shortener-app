@@ -98,11 +98,15 @@ export default function Analytics() {
                         {MESSAGES.buttons.back}
                     </Link>
                 </Button>
-                <Button variant="outline" onClick={handleRefresh}>
-                        <RefreshCcw className={`h-4 w-4 sm:mr-2`} />
-                        <span className="hidden sm:inline">
-                            {MESSAGES.buttons.refresh}
-                        </span>
+                <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleRefresh}
+                    className="hover:bg-primary hover:text-primary-foreground transition-colors">
+                    <RefreshCcw className="h-4 w-4 sm:mr-2" />
+                    <span className="hidden sm:inline">
+                        {MESSAGES.buttons.refresh}
+                    </span>
                 </Button>
             </div>
 
