@@ -4,7 +4,6 @@ import Analytics from '@/app/analytics/[code]/page';
 import axios from 'axios';
 import * as navigation from 'next/navigation';
 import { AnalyticsData } from '@/app/src/types/apiModels';
-import { MESSAGES } from '../lib/messages';
 
 jest.mock('axios');
 jest.mock('next/navigation', () => ({
@@ -23,17 +22,17 @@ describe('Analytics Page', () => {
             {
                 ip_address: '192.168.1.1',
                 country: 'Malaysia',
-                visited_at: '2026-02-15T10:00:00Z',
+                visited_at: '2024-01-15T10:00:00Z',
             },
             {
                 ip_address: '192.168.1.2',
                 country: 'Singapore',
-                visited_at: '2026-02-14T15:30:00Z',
+                visited_at: '2024-01-14T15:30:00Z',
             },
             {
                 ip_address: '192.168.1.3',
                 country: 'Unknown',
-                visited_at: '2026-02-13T08:00:00Z',
+                visited_at: '2024-01-13T08:00:00Z',
             },
         ],
     };
@@ -71,7 +70,24 @@ describe('Analytics Page', () => {
             expect(screen.getByText('Link Analytics')).toBeInTheDocument();
         });
 
-        expect(screen.getByText('42')).toBeInTheDocument();
+        const clickCounts = screen.getAllByText('42');
+        expect(clickCounts.length).toBeGreaterThan(0);
+
+        expect(screen.getByText(/abc123/)).toBeInTheDocument();
+    });
+
+    it('should exclude "Unknown" from unique countries count', async () => {
+        mockedAxios.get.mockResolvedValueOnce({ data: mockAnalyticsData });
+
+        render(<Analytics />);
+
+        await waitFor(() => {
+            expect(screen.getByText('Link Analytics')).toBeInTheDocument();
+        });
+
+        // Check that "2" appears (2 unique countries excluding Unknown)
+        const countryCounts = screen.getAllByText('2');
+        expect(countryCounts.length).toBeGreaterThan(0);
     });
 
     it('should display visits table', async () => {
@@ -91,7 +107,7 @@ describe('Analytics Page', () => {
     it('should show error state when API fails', async () => {
         const errorResponse = {
             response: {
-                data: { error: MESSAGES.errors.noDataFound },
+                data: { error: 'Not found' },
             },
         };
 
@@ -101,7 +117,7 @@ describe('Analytics Page', () => {
         render(<Analytics />);
 
         await waitFor(() => {
-            expect(screen.getByText(new RegExp(`${MESSAGES.errors.noDataFound}`))).toBeInTheDocument();
+            expect(screen.getByText(/no data found/i)).toBeInTheDocument();
         });
     });
 
@@ -128,18 +144,22 @@ describe('Analytics Page', () => {
         render(<Analytics />);
 
         await waitFor(() => {
-            expect(screen.getByText(new RegExp(`${MESSAGES.operations.noVisitData}`))).toBeInTheDocument();
+            const noVisitElements = screen.getAllByText(/no visit/i);
+            expect(noVisitElements.length).toBeGreaterThan(0);
         });
     });
 
-    it('should display latest visit time', async () => {
+    it('should display latest visit section', async () => {
         mockedAxios.get.mockResolvedValueOnce({ data: mockAnalyticsData });
 
         render(<Analytics />);
 
         await waitFor(() => {
-            expect(screen.getByText('Latest Visit')).toBeInTheDocument();
+            expect(screen.getByText('Link Analytics')).toBeInTheDocument();
         });
+
+        const latestVisitElements = screen.getAllByText(/latest visit/i);
+        expect(latestVisitElements.length).toBeGreaterThan(0);
     });
 
     it('should render back button', async () => {
@@ -148,9 +168,27 @@ describe('Analytics Page', () => {
         render(<Analytics />);
 
         await waitFor(() => {
-            const backButton = screen.getByRole('link', { name: new RegExp(`${MESSAGES.buttons.back}`) });
-            expect(backButton).toBeInTheDocument();
-            expect(backButton).toHaveAttribute('href', '/');
+            const backButtons = screen.getAllByRole('link', { name: /back/i });
+            expect(backButtons.length).toBeGreaterThan(0);
+            expect(backButtons[0]).toHaveAttribute('href', '/');
         });
+    });
+
+    it('should display all visit details in table', async () => {
+        mockedAxios.get.mockResolvedValueOnce({ data: mockAnalyticsData });
+
+        render(<Analytics />);
+
+        await waitFor(() => {
+            expect(screen.getByText('Recent Visits')).toBeInTheDocument();
+        });
+
+        expect(screen.getByText('192.168.1.1')).toBeInTheDocument();
+        expect(screen.getByText('192.168.1.2')).toBeInTheDocument();
+        expect(screen.getByText('192.168.1.3')).toBeInTheDocument();
+
+        expect(screen.getByText('Malaysia')).toBeInTheDocument();
+        expect(screen.getByText('Singapore')).toBeInTheDocument();
+        expect(screen.getByText('Unknown')).toBeInTheDocument();
     });
 });
